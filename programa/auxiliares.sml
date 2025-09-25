@@ -119,4 +119,87 @@ fun confirmarAccion mensaje =
     end
 
 
+(* Función para dividir una línea CSV *)
+fun dividirCSV linea =
+    let
+        fun dividir [] acc current = rev (current :: acc)
+          | dividir (#"," :: resto) acc current = dividir resto (current :: acc) ""
+          | dividir (c :: resto) acc current = dividir resto acc (current ^ String.str(c))
+    in
+        dividir (String.explode linea) [] ""
+    end
+
+(* Función para convertir línea CSV a tupla de registro de fruta *)
+fun lineaARegistro linea =
+    let
+        val campos = dividirCSV linea
+    in
+        case campos of
+            [codigo, nombre, familia, cantidadStr, precioStr] =>
+                (case (Int.fromString cantidadStr, Real.fromString precioStr) of
+                     (SOME cantidad, SOME precio) => 
+                         SOME (codigo, nombre, familia, cantidad, precio)
+                   | _ => NONE)
+          | _ => NONE
+    end
+
+(* Función para leer todos los registros de un archivo CSV *)
+fun leerRegistrosCSV nombreArchivo =
+    let
+        val archivo = TextIO.openIn nombreArchivo
+        
+        fun leerLineas acc =
+            case TextIO.inputLine archivo of
+                SOME linea => 
+                    if String.isPrefix "codigo," linea then 
+                        leerLineas acc
+                    else
+                        let
+                            val lineaLimpia = String.substring(linea, 0, String.size(linea) - 1)
+                        in
+                            case lineaARegistro lineaLimpia of
+                                SOME registro => leerLineas (registro :: acc)
+                              | NONE => leerLineas acc
+                        end
+              | NONE => rev acc
+
+        val registros = leerLineas []
+        val _ = TextIO.closeIn archivo
+    in
+        registros
+    end
+
+
+
+(* Función para convertir string a minúsculas*)
+fun aMinusculas s =
+    String.implode (List.map (fn c => 
+        if #"A" <= c andalso c <= #"Z" then 
+            Char.chr(Char.ord(c) + 32) 
+        else c) (String.explode s))
+
+(* Función para verificar si un string contiene otro *)
+fun contieneCadena busqueda texto =
+    let
+        val busquedaMin = aMinusculas busqueda
+        val textoMin = aMinusculas texto
+    in
+        String.isSubstring busquedaMin textoMin
+    end
+
+(* Función para mostrar un registro de fruta formateado *)
+fun mostrarRegistroFruta (codigo, nombre, familia, cantidad, precio) =
+    let
+        val total = Real.fromInt(cantidad) * precio
+    in
+        print("  Código: " ^ codigo ^ "\n");
+        print("  Nombre: " ^ nombre ^ "\n");
+        print("  Familia: " ^ familia ^ "\n");
+        print("  Cantidad vendida: " ^ Int.toString(cantidad) ^ " unidades\n");
+        print("  Precio unitario: $" ^ Real.toString(precio) ^ "\n");
+        print("  Total de venta: $" ^ Real.toString(total) ^ "\n");
+        print("  " ^ String.implode (List.tabulate(40, fn _ => #"-")) ^ "\n")
+    end
+
+
 

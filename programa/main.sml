@@ -1,6 +1,7 @@
 (* Cargar módulos necesarios *)
 use "auxiliares.sml";
 use "creador.sml";
+use "analizador.sml";
 
 fun main () = 
     let 
@@ -19,8 +20,7 @@ fun main () =
                 end
           | "2" =>
                 let 
-                    val _ = print("Has seleccionado Analisis de Registros\n")
-                    val _ = pausar()
+                    val _ = menuAnalisisRegistros()
                 in
                     main()  
                 end
