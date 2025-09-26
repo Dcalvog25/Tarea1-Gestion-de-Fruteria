@@ -187,7 +187,7 @@ fun contieneCadena busqueda texto =
         String.isSubstring busquedaMin textoMin
     end
 
-(* Función para mostrar un registro de fruta formateado *)
+(* Función para mostrar un registro de fruta *)
 fun mostrarRegistroFruta (codigo, nombre, familia, cantidad, precio) =
     let
         val total = Real.fromInt(cantidad) * precio

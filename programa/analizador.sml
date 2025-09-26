@@ -216,7 +216,7 @@ fun contarFrutasPorFamilia archivo =
         val registros = leerRegistrosCSV archivo
 
         val busqueda = leerEntrada "Ingrese el nombre de la familia a buscar: "
-        val registroFamilia = List.filter (fn(_,_,familia,_,_) => familia = busqueda) registros
+        val registroFamilia = List.filter (fn(_,_,familia,_,_) => busqueda = familia) registros
     in
         case registroFamilia of
             [] => print("No se encontraron frutas para la familia: " ^ busqueda ^ "\n")
@@ -241,7 +241,182 @@ fun contarFrutasPorFamilia archivo =
     end
 
 fun resumenGeneralVerduleria archivo =
-    print("Funcion 'Resumen general de la verdulería' no implementada aun.\n")
+    let 
+        val _ = mostrarTitulo "RESUMEN GENERAL DE LA VERDULERIA"
+        val registros = leerRegistrosCSV archivo
+
+        fun agruparPorFamilia [] = []
+          | agruparPorFamilia registros =
+                let
+                    val familias = List.map (fn (_, _, familia, _, _) => familia) registros
+                    fun eliminarDuplicados [] = []
+                      | eliminarDuplicados (x::xs) = 
+                            x :: eliminarDuplicados (List.filter (fn y => y <> x) xs)
+                    val familiasUnicas = eliminarDuplicados familias
+
+                    fun contarFrutasEnFamilia familia =
+                        let
+                            val frutasEnFamilia = List.filter (fn (_, _, f, _, _) => f = familia) registros
+                            val nombres = List.map (fn (_, nombre, _, _, _) => nombre) frutasEnFamilia
+                            fun eliminarDuplicados [] = []
+                              | eliminarDuplicados (x::xs) = 
+                                    x :: eliminarDuplicados (List.filter (fn y => y <> x) xs)
+                            val nombresUnicos = eliminarDuplicados nombres
+                        in
+                            (familia, List.length nombresUnicos)
+                        end
+                in
+                    List.map contarFrutasEnFamilia familiasUnicas
+                end
+        val conteoPorFamilia = agruparPorFamilia registros (*aqui guardo la cantidad de frutas por familia*)
+
+        (* Función para encontrar frutas con mayor y menor unidades vendidas *)
+        fun frutamayorymenor [] = [] 
+            | frutamayorymenor registros =
+                let 
+                    val frutas = List.map (fn (_, nombre, _, _, _) => nombre) registros
+                    fun eliminarDuplicados [] = []
+                      | eliminarDuplicados (x::xs) = 
+                            x :: eliminarDuplicados (List.filter (fn y => y <> x) xs)
+                    val frutasUnicas = eliminarDuplicados frutas
+
+                    fun cantidadporfruta fruta = 
+                        let 
+                            val frutasEnFruta = List.filter (fn (_, n, _, _, _) => n = fruta) registros
+                            val totalUnidades = List.foldl (fn ((_, _, _, cantidad, _), acc) => acc + cantidad) 0 frutasEnFruta
+                        in
+                            (fruta, totalUnidades)
+                        end 
+
+                    val frutasConCantidad = List.map cantidadporfruta frutasUnicas
+
+                    fun frutaconmayorunidades [] = ("", 0)
+                      | frutaconmayorunidades [x] = x
+                      | frutaconmayorunidades ((x as (_, unidadesX)) :: resto) =
+                            let
+                                val mayorDelResto = frutaconmayorunidades resto
+                                val (_, unidadesMayor) = mayorDelResto
+                            in
+                                if unidadesX >= unidadesMayor then x else mayorDelResto
+                            end
+                    
+                    fun frutaconmenorunidades [] = ("", 999999)
+                      | frutaconmenorunidades [x] = x
+                      | frutaconmenorunidades ((x as (_, unidadesX)) :: resto) =
+                            let
+                                val menorDelResto = frutaconmenorunidades resto
+                                val (_, unidadesMenor) = menorDelResto
+                            in
+                                if unidadesX <= unidadesMenor then x else menorDelResto
+                            end
+
+                    val frutaMayor = frutaconmayorunidades frutasConCantidad
+                    val frutaMenor = frutaconmenorunidades frutasConCantidad
+                in
+                    [frutaMenor, frutaMayor]  (* Retorna lista con [(menor), (mayor)] *)
+                end
+
+        val frutasMayorMenor = frutamayorymenor registros (*aqui guardo la fruta con mayor y menor unidades vendidas*)
+
+        fun familiamayormonto [] = ("", 0.0)
+            | familiamayormonto registros =
+                let
+                    val familias = List.map (fn (_, _, familia, _, _) => familia) registros
+                    fun eliminarDuplicados [] = []
+                      | eliminarDuplicados (x::xs) = 
+                            x :: eliminarDuplicados (List.filter (fn y => y <> x) xs)
+                    val familiasUnicas = eliminarDuplicados familias
+
+                    fun montoporfamilia familia =
+                        let
+                            val frutasEnFamilia = List.filter (fn (_, _, f, _, _) => f = familia) registros
+                            val totalMonto = List.foldl (fn ((_, _, _, cantidad, precio), acc) => acc + (Real.fromInt(cantidad) * precio)) 0.0 frutasEnFamilia
+                        in
+                            (familia, totalMonto)
+                        end 
+
+                    val familiasConMonto = List.map montoporfamilia familiasUnicas
+
+                    fun familiaconmayormonto [] = ("", 0.0)
+                      | familiaconmayormonto [x] = x
+                      | familiaconmayormonto ((x as (_, montoX)) :: resto) =
+                            let
+                                val mayorDelResto = familiaconmayormonto resto
+                                val (_, montoMayor) = mayorDelResto
+                            in
+                                if montoX >= montoMayor then x else mayorDelResto
+                            end
+
+                    val familiaMayorMonto = familiaconmayormonto familiasConMonto
+                in
+                    familiaMayorMonto  (* Retorna la familia con mayor monto vendido *)
+                end
+        val familiaMayorMonto = familiamayormonto registros (*aqui guardo la familia con mayor monto vendido*)
+
+        fun frutaconmayormonto [] = ("", 0.0)
+            | frutaconmayormonto registros =
+                let 
+                    val frutas = List.map (fn (_, nombre, _, _, _) => nombre) registros
+                    fun eliminarDuplicados [] = []
+                      | eliminarDuplicados (x::xs) = 
+                            x :: eliminarDuplicados (List.filter (fn y => y <> x) xs)
+                    val frutasUnicas = eliminarDuplicados frutas
+
+                    fun montoporfruta fruta = 
+                        let 
+                            val frutasEnFruta = List.filter (fn (_, n, _, _, _) => n = fruta) registros
+                            val totalMonto = List.foldl (fn ((_, _, _, cantidad, precio), acc) => acc + (Real.fromInt(cantidad) * precio)) 0.0 frutasEnFruta
+                        in
+                            (fruta, totalMonto)
+                        end 
+
+                    val frutasConMonto = List.map montoporfruta frutasUnicas
+
+                    fun frutaconmayormonto [] = ("", 0.0)
+                      | frutaconmayormonto [x] = x
+                      | frutaconmayormonto ((x as (_, montoX)) :: resto) =
+                            let
+                                val mayorDelResto = frutaconmayormonto resto
+                                val (_, montoMayor) = mayorDelResto
+                            in
+                                if montoX >= montoMayor then x else mayorDelResto
+                            end
+
+                    val frutaMayorMonto = frutaconmayormonto frutasConMonto
+                in
+                    frutaMayorMonto  (* Retorna la fruta con mayor monto vendido *)
+                end
+        val frutaMayorMonto = frutaconmayormonto registros (*aqui guardo la fruta con mayor monto vendido*)
+
+        val _ = print("\n=== RESUMEN GENERAL DE LA VERDULERIA ===\n")
+        
+        (* 1. Cantidad de frutas por familia *)
+        val _ = print("\n1. CANTIDAD DE FRUTAS POR FAMILIA:\n")
+        val _ = List.app (fn (familia, count) =>
+            print("   - " ^ familia ^ ": " ^ Int.toString(count) ^ " frutas diferentes\n")
+        ) conteoPorFamilia
+
+        (* 2. Fruta con mayor cantidad de unidades vendidas *)
+        (* 3. Fruta con menor cantidad de unidades vendidas *)
+        val _ = print("\n2. FRUTAS CON MAYOR Y MENOR UNIDADES VENDIDAS:\n")
+        val _ = case frutasMayorMenor of
+            [(nombreMenor, cantMenor), (nombreMayor, cantMayor)] =>
+                (print("   - Fruta con MAYOR unidades vendidas: " ^ nombreMayor ^ " (" ^ Int.toString(cantMayor) ^ " unidades)\n");
+                 print("   - Fruta con MENOR unidades vendidas: " ^ nombreMenor ^ " (" ^ Int.toString(cantMenor) ^ " unidades)\n"))
+          | _ => print("   - No se pudieron calcular las estadísticas de mayor/menor unidades.\n")
+
+        (* 4. Familia con mayor monto total vendido *)
+        val _ = print("\n3. FAMILIA CON MAYOR MONTO TOTAL VENDIDO:\n")
+        val (nombreFamilia, montoFamilia) = familiaMayorMonto
+        val _ = print("   - " ^ nombreFamilia ^ ": $" ^ Real.toString(montoFamilia) ^ "\n")
+
+        (* 5. Fruta con mayor monto total vendido *)
+        val _ = print("\n4. FRUTA CON MAYOR MONTO TOTAL VENDIDO:\n")
+        val (nombreFruta, montoFruta) = frutaMayorMonto
+        val _ = print("   - " ^ nombreFruta ^ ": $" ^ Real.toString(montoFruta) ^ "\n")
+    in
+        ()
+    end
 
 fun volverMenuPrincipal () =
     print("Volviendo al menu principal...\n")
