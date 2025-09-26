@@ -211,7 +211,34 @@ fun analizarFamiliasConMuchasFrutas archivo =
     end 
 
 fun contarFrutasPorFamilia archivo =
-    print("Funcion 'Cantidad de frutas por familia' no implementada aun.\n")
+    let 
+        val _ = mostrarTitulo "CANTIDAD Y LISTA DE FRUTAS POR FAMILIA"
+        val registros = leerRegistrosCSV archivo
+
+        val busqueda = leerEntrada "Ingrese el nombre de la familia a buscar: "
+        val registroFamilia = List.filter (fn(_,_,familia,_,_) => familia = busqueda) registros
+    in
+        case registroFamilia of
+            [] => print("No se encontraron frutas para la familia: " ^ busqueda ^ "\n")
+          | _ =>
+                let
+                    val _ = print("Frutas encontradas para la familia: " ^ busqueda ^ "\n")
+                
+                    val nombres = List.map (fn (_, nombre, _, _, _) => nombre) registroFamilia
+                    
+                    (* Eliminar nombres duplicados *)
+                    fun eliminarDuplicados [] = []
+                      | eliminarDuplicados (x::xs) = 
+                            x :: eliminarDuplicados (List.filter (fn y => y <> x) xs)
+                    val nombresUnicos = eliminarDuplicados nombres
+                    
+                    (* Mostrar la lista de nombres únicos *)
+                    val _ = List.app (fn nombre => print(" - " ^ nombre ^ "\n")) nombresUnicos
+                    val _ = print("Total de frutas en la familia " ^ busqueda ^ ": " ^ Int.toString(List.length nombresUnicos) ^ "\n")
+                in
+                    ()
+                end
+    end
 
 fun resumenGeneralVerduleria archivo =
     print("Funcion 'Resumen general de la verdulería' no implementada aun.\n")
@@ -225,7 +252,7 @@ fun menuOpcionesAnalisis archivo =
         val _ = print("1. Mostrar frutas populares dentro de un rango de cantidad vendida\n")
         val _ = print("2. Identificar familias con mas de 4 frutas diferentes registradas\n")
         val _ = print("3. Buscar frutas por codigo o nombre\n")
-        val _ = print("4. Cantidad de frutas por familia\n")
+        val _ = print("4. Cantidad y lista de frutas por familia\n")
         val _ = print("5. Resumen general de la verduleria\n")
         val _ = print("6. Volver al menu principal\n")
         val opcion = leerEntrada "Opcion: "
