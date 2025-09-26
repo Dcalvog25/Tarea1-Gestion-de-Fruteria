@@ -163,7 +163,52 @@ fun analizarFrutasPopulares archivo =
     end
 
 fun analizarFamiliasConMuchasFrutas archivo =
-    print("Funcion 'Identificar familias con mas de 4 frutas' no implementada aun.\n")
+    let
+        val _ = mostrarTitulo "FAMILIAS CON MAS DE 4 FRUTAS DIFERENTES REGISTRADAS"
+        val registros = leerRegistrosCSV archivo
+
+        fun agruparPorFamilia [] = []
+          | agruparPorFamilia registros =
+                let
+                    val familias = List.map (fn (_, _, familia, _, _) => familia) registros
+                    fun eliminarDuplicados [] = []
+                      | eliminarDuplicados (x::xs) = 
+                            x :: eliminarDuplicados (List.filter (fn y => y <> x) xs)
+                    val familiasUnicas = eliminarDuplicados familias
+
+                    fun contarFrutasEnFamilia familia =
+                        let
+                            val frutasEnFamilia = List.filter (fn (_, _, f, _, _) => f = familia) registros
+                            val nombres = List.map (fn (_, nombre, _, _, _) => nombre) frutasEnFamilia
+                            fun eliminarDuplicados [] = []
+                              | eliminarDuplicados (x::xs) = 
+                                    x :: eliminarDuplicados (List.filter (fn y => y <> x) xs)
+                            val nombresUnicos = eliminarDuplicados nombres
+                        in
+                            (familia, List.length nombresUnicos)
+                        end
+                in
+                    List.map contarFrutasEnFamilia familiasUnicas
+                end
+        val conteoPorFamilia = agruparPorFamilia registros
+        val familiasConMuchasFrutas = List.filter (fn (_, count) => count > 2) conteoPorFamilia
+        val _ = print("\n=== FAMILIAS CON MAS DE 4 FRUTAS DIFERENTES ===\n")
+        val _ = 
+            case familiasConMuchasFrutas of
+                [] => print("No se encontraron familias con mas de 4 frutas diferentes.\n")
+              | _ =>
+                    let
+                        val numFamilias = List.length familiasConMuchasFrutas
+                        val _ = print("Se encontraron " ^ Int.toString(numFamilias) ^ " familia(s) con mas de 4 frutas diferentes:\n\n")
+                        val _ = List.app (fn (familia, count) =>
+                            print("  Familia: " ^ familia ^ " - Cantidad de frutas diferentes: " ^ Int.toString(count) ^ "\n")
+                        ) familiasConMuchasFrutas
+                    in
+                        ()
+                    end
+    in
+        ()
+    end 
 
 fun contarFrutasPorFamilia archivo =
     print("Funcion 'Cantidad de frutas por familia' no implementada aun.\n")
@@ -181,7 +226,7 @@ fun menuOpcionesAnalisis archivo =
         val _ = print("2. Identificar familias con mas de 4 frutas diferentes registradas\n")
         val _ = print("3. Buscar frutas por codigo o nombre\n")
         val _ = print("4. Cantidad de frutas por familia\n")
-        val _ = print("5. Resumen general de la verdulería\n")
+        val _ = print("5. Resumen general de la verduleria\n")
         val _ = print("6. Volver al menu principal\n")
         val opcion = leerEntrada "Opcion: "
     in
