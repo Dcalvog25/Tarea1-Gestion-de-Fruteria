@@ -13,8 +13,8 @@ fun buscarFrutasPorCodigoONombre archivo =
         
         (* Filtrar registros que coincidan con el código o nombre *)
         val registrosEncontrados = List.filter (fn (codigo, nombre, _, _, _) =>
-            contieneCadena terminoBusqueda codigo orelse 
-            contieneCadena terminoBusqueda nombre
+            terminoBusqueda = codigo orelse 
+            terminoBusqueda = nombre
         ) registros
 
 
@@ -191,7 +191,7 @@ fun analizarFamiliasConMuchasFrutas archivo =
                     List.map contarFrutasEnFamilia familiasUnicas
                 end
         val conteoPorFamilia = agruparPorFamilia registros
-        val familiasConMuchasFrutas = List.filter (fn (_, count) => count > 2) conteoPorFamilia
+        val familiasConMuchasFrutas = List.filter (fn (_, count) => count >= 4) conteoPorFamilia
         val _ = print("\n=== FAMILIAS CON MAS DE 4 FRUTAS DIFERENTES ===\n")
         val _ = 
             case familiasConMuchasFrutas of

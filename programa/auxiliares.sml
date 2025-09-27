@@ -192,7 +192,7 @@ fun mostrarRegistroFruta (codigo, nombre, familia, cantidad, precio) =
     let
         val total = Real.fromInt(cantidad) * precio
     in
-        print("  Código: " ^ codigo ^ "\n");
+        print("  Codigo: " ^ codigo ^ "\n");
         print("  Nombre: " ^ nombre ^ "\n");
         print("  Familia: " ^ familia ^ "\n");
         print("  Cantidad vendida: " ^ Int.toString(cantidad) ^ " unidades\n");
