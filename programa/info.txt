@@ -1,0 +1,8 @@
+
+- **Nombre del curso:** Lenguajes de Programacion
+- **Número de semestre y año lectivo:** IIS 2025
+- **Nombre del Estudiante:** David Calvo García
+- **Número de carnet:** 2024122451
+- **Número de tarea:** Tarea #2
+- **Fecha de entrega:** 26 de septiembre del 2025
+- **Estatus de la entrega:** Excelente
