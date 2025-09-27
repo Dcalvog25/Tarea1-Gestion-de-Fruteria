@@ -1,7 +1,10 @@
 use "auxiliares.sml";
 
 
-(* Función para buscar frutas por código o nombre *)
+(* buscarFrutasPorCodigoONombre
+   Entrada: string (archivo)
+   Salida: unit
+   Objetivo: Buscar frutas por código o nombre y mostrar resultados *)
 fun buscarFrutasPorCodigoONombre archivo =
     let
         val _ = mostrarTitulo "BUSCAR FRUTAS POR CODIGO O NOMBRE"
@@ -57,6 +60,10 @@ fun buscarFrutasPorCodigoONombre archivo =
     end
 
 
+(* analizarFrutasPopulares
+   Entrada: string (archivo)
+   Salida: unit
+   Objetivo: Mostrar ranking de frutas populares en rango de monto *)
 fun analizarFrutasPopulares archivo =
     let
         val _ = mostrarTitulo "FRUTAS POPULARES DENTRO DE UN RANGO DE MONTO VENDIDO"
@@ -162,6 +169,10 @@ fun analizarFrutasPopulares archivo =
         ()
     end
 
+(* analizarFamiliasConMuchasFrutas
+   Entrada: string (archivo)
+   Salida: unit
+   Objetivo: Identificar familias con más de 4 frutas diferentes *)
 fun analizarFamiliasConMuchasFrutas archivo =
     let
         val _ = mostrarTitulo "FAMILIAS CON MAS DE 4 FRUTAS DIFERENTES REGISTRADAS"
@@ -210,6 +221,10 @@ fun analizarFamiliasConMuchasFrutas archivo =
         ()
     end 
 
+(* contarFrutasPorFamilia
+   Entrada: string (archivo)
+   Salida: unit
+   Objetivo: Contar y listar frutas de una familia específica *)
 fun contarFrutasPorFamilia archivo =
     let 
         val _ = mostrarTitulo "CANTIDAD Y LISTA DE FRUTAS POR FAMILIA"
@@ -240,6 +255,10 @@ fun contarFrutasPorFamilia archivo =
                 end
     end
 
+(* resumenGeneralVerduleria
+   Entrada: string (archivo)
+   Salida: unit
+   Objetivo: Generar resumen completo con estadísticas generales *)
 fun resumenGeneralVerduleria archivo =
     let 
         val _ = mostrarTitulo "RESUMEN GENERAL DE LA VERDULERIA"
@@ -421,6 +440,10 @@ fun resumenGeneralVerduleria archivo =
 fun volverMenuPrincipal () =
     print("Volviendo al menu principal...\n")
 
+(* menuOpcionesAnalisis
+   Entrada: string (archivo)
+   Salida: unit
+   Objetivo: Mostrar menú de opciones de análisis y manejar selección *)
 fun menuOpcionesAnalisis archivo =
     let
         val _ = print("Seleccione una opcion de analisis para el archivo " ^ archivo ^ ":\n")
@@ -476,6 +499,10 @@ fun menuOpcionesAnalisis archivo =
                 end
     end
 
+(* menuAnalisisRegistros
+   Entrada: unit
+   Salida: unit
+   Objetivo: Menú principal de análisis, solicita archivo a analizar *)
 fun menuAnalisisRegistros () =
     let
         val _ = mostrarTitulo "Bienvenido al Analizador de Registros"

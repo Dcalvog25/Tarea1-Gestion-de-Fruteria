@@ -2,7 +2,10 @@
 use "auxiliares.sml";
 
 
-(* Función para agregar un registro al archivo CSV *)
+(* agregarRegistro
+   Entrada: unit
+   Salida: unit
+   Objetivo: Agregar nuevo registro de fruta al catálogo CSV *)
 fun agregarRegistro () = 
     let 
         val _ = mostrarTitulo "AGREGAR REGISTRO DE FRUTA"
@@ -42,6 +45,10 @@ fun agregarRegistro () =
     end
 
 
+(* limpiarCatalogo
+   Entrada: unit
+   Salida: unit
+   Objetivo: Limpiar todo el contenido del catálogo con confirmación *)
 fun limpiarCatalogo () =
     let 
         val mensaje = "¿Está seguro de que desea limpiar todo el catálogo?"
@@ -65,6 +72,10 @@ fun limpiarCatalogo () =
             end
     end
 
+(* menuAdministracionCatalogo
+   Entrada: unit
+   Salida: unit
+   Objetivo: Mostrar menú de administración y manejar opciones *)
 fun menuAdministracionCatalogo () =
     let 
         val _ = mostrarTitulo "ADMINISTRACION DE CATALOGOS"

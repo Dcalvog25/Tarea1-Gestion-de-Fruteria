@@ -1,5 +1,8 @@
 
-(* Función para leer una línea y eliminar el salto de línea *)
+(* leerEntrada
+   Entrada: string (prompt a mostrar)
+   Salida: string (entrada del usuario sin \n)
+   Objetivo: Capturar entrada del usuario desde consola *)
 fun leerEntrada prompt =
     let
         val _ = print(prompt)
@@ -10,19 +13,28 @@ fun leerEntrada prompt =
           | NONE => ""
     end
 
-(* Función para validar que un string sea un entero *)
+(* esEntero
+   Entrada: string
+   Salida: bool
+   Objetivo: Validar si un string representa un número entero válido *)
 fun esEntero s = 
     case Int.fromString s of
         SOME _ => true
       | NONE => false
 
-(* Función para validar que un string sea un real *)
+(* esReal
+   Entrada: string
+   Salida: bool
+   Objetivo: Validar si un string representa un número real válido *)
 fun esReal s = 
     case Real.fromString s of
         SOME _ => true
       | NONE => false
 
-(* Función para leer un entero con validación *)
+(* leerEntero
+   Entrada: string (prompt)
+   Salida: int
+   Objetivo: Leer y validar entrada de número entero con reintentos *)
 fun leerEntero prompt =
     let
         fun intentarLeer () =
@@ -40,7 +52,10 @@ fun leerEntero prompt =
         intentarLeer()
     end
 
-(* Función para leer un real con validación *)
+(* leerReal
+   Entrada: string (prompt)
+   Salida: real
+   Objetivo: Leer y validar entrada de número real con reintentos *)
 fun leerReal prompt =
     let
         fun intentarLeer () =
@@ -60,7 +75,10 @@ fun leerReal prompt =
 
 
 
-(* Función para unir strings con un separador *)
+(* unirStrings
+   Entrada: string (separador), string list
+   Salida: string
+   Objetivo: Concatenar lista de strings con separador específico *)
 fun unirStrings separador lista =
     case lista of
         [] => ""
@@ -68,12 +86,18 @@ fun unirStrings separador lista =
       | x :: xs => x ^ separador ^ unirStrings separador xs
 
 
-(* Función para verificar si un archivo existe *)
+(* archivoExiste
+   Entrada: string (nombre del archivo)
+   Salida: bool
+   Objetivo: Verificar existencia de archivo sin generar excepción *)
 fun archivoExiste nombreArchivo =
     (TextIO.openIn nombreArchivo; TextIO.closeIn (TextIO.openIn nombreArchivo); true)
     handle IO.Io _ => false
 
-(* Función para crear archivo con contenido inicial si no existe *)
+(* crearArchivoSiNoExiste
+   Entrada: string (archivo), string (contenido inicial)
+   Salida: unit
+   Objetivo: Crear archivo con contenido solo si no existe previamente *)
 fun crearArchivoSiNoExiste nombreArchivo contenidoInicial =
     if not (archivoExiste nombreArchivo) then
         let 
@@ -88,7 +112,10 @@ fun crearArchivoSiNoExiste nombreArchivo contenidoInicial =
 
 
 
-(* Función para pausar y esperar Enter *)
+(* pausar
+   Entrada: unit
+   Salida: unit
+   Objetivo: Pausar ejecución hasta que usuario presione Enter *)
 fun pausar () =
     let
         val _ = print("Presione Enter para continuar...\n")
@@ -97,7 +124,10 @@ fun pausar () =
         ()
     end
 
-(* Función para mostrar un título centrado *)
+(* mostrarTitulo
+   Entrada: string (título)
+   Salida: unit
+   Objetivo: Mostrar título centrado con decoración *)
 fun mostrarTitulo titulo =
     let
         val linea = "========================================"
@@ -106,7 +136,10 @@ fun mostrarTitulo titulo =
         print(linea ^ "\n" ^ espacios ^ titulo ^ "\n" ^ linea ^ "\n")
     end
 
-(* Función para mostrar mensaje con confirmación s/n *)
+(* confirmarAccion
+   Entrada: string (mensaje)
+   Salida: bool
+   Objetivo: Solicitar confirmación s/n del usuario *)
 fun confirmarAccion mensaje =
     let
         val _ = print(mensaje ^ " (s/n): ")
@@ -119,7 +152,10 @@ fun confirmarAccion mensaje =
     end
 
 
-(* Función para dividir una línea CSV *)
+(* dividirCSV
+   Entrada: string (línea CSV)
+   Salida: string list (campos separados)
+   Objetivo: Parsear línea CSV separando por comas *)
 fun dividirCSV linea =
     let
         fun dividir [] acc current = rev (current :: acc)
@@ -129,7 +165,10 @@ fun dividirCSV linea =
         dividir (String.explode linea) [] ""
     end
 
-(* Función para convertir línea CSV a tupla de registro de fruta *)
+(* lineaARegistro
+   Entrada: string (línea CSV)
+   Salida: (string * string * string * int * real) option
+   Objetivo: Convertir línea CSV a tupla de registro de fruta *)
 fun lineaARegistro linea =
     let
         val campos = dividirCSV linea
@@ -143,7 +182,10 @@ fun lineaARegistro linea =
           | _ => NONE
     end
 
-(* Función para leer todos los registros de un archivo CSV *)
+(* leerRegistrosCSV
+   Entrada: string (nombre del archivo)
+   Salida: (string * string * string * int * real) list
+   Objetivo: Leer todos los registros válidos de un archivo CSV *)
 fun leerRegistrosCSV nombreArchivo =
     let
         val archivo = TextIO.openIn nombreArchivo
@@ -171,14 +213,20 @@ fun leerRegistrosCSV nombreArchivo =
 
 
 
-(* Función para convertir string a minúsculas*)
+(* aMinusculas
+   Entrada: string
+   Salida: string
+   Objetivo: Convertir string a minúsculas para búsquedas insensibles *)
 fun aMinusculas s =
     String.implode (List.map (fn c => 
         if #"A" <= c andalso c <= #"Z" then 
             Char.chr(Char.ord(c) + 32) 
         else c) (String.explode s))
 
-(* Función para verificar si un string contiene otro *)
+(* contieneCadena
+   Entrada: string (búsqueda), string (texto)
+   Salida: bool
+   Objetivo: Verificar si texto contiene subcadena (insensible a mayúsculas) *)
 fun contieneCadena busqueda texto =
     let
         val busquedaMin = aMinusculas busqueda
@@ -187,7 +235,10 @@ fun contieneCadena busqueda texto =
         String.isSubstring busquedaMin textoMin
     end
 
-(* Función para mostrar un registro de fruta *)
+(* mostrarRegistroFruta
+   Entrada: (string * string * string * int * real)
+   Salida: unit
+   Objetivo: Mostrar registro de fruta formateado con totales *)
 fun mostrarRegistroFruta (codigo, nombre, familia, cantidad, precio) =
     let
         val total = Real.fromInt(cantidad) * precio

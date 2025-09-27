@@ -3,6 +3,10 @@ use "auxiliares.sml";
 use "creador.sml";
 use "analizador.sml";
 
+(* main
+   Entrada: unit
+   Salida: unit
+   Objetivo: Función principal del programa, maneja menú principal *)
 fun main () = 
     let 
         val _ = mostrarTitulo "GESTION DE FRUTERIA"
